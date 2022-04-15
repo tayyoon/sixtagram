@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const PostSchema = new mongoose.Schema({});
 
+
+
+
+
+
+
 // UserSchema.virtual('jwtId').get(function () {
 //     return this._id.toHexString();
 // });
