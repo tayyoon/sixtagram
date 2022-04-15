@@ -34,13 +34,14 @@ router.get("/api/postList/:PostId", async (req, res) => {
 });
 
 // 게시글 작성 페이지 //저장됌
-router.post("/api/posts", authMiddleware, async (req, res) => {
+router.post("/posts", authMiddleware, async (req, res) => {
   //작성한 정보 가져옴
-  const { content, imageUrl } = req.body;
+  const { content } = req.body;
   //console.log(borderDate, subject, nick, password_write, content); // ok
 
   // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
   const { user } = res.locals;
+  const userId = user.userId;
   //console.log(user)  //ok
 
   const moment = require("moment");
@@ -49,18 +50,17 @@ router.post("/api/posts", authMiddleware, async (req, res) => {
   const createdAt = String(moment().format("YYYY-MM-DD HH:mm:ss"));
 
   //현재시각을 암호화하여 PostId생성
-  const postId = CryptoJS.SHA256(createdAt)["words"][0];
+  // const postId = CryptoJS.SHA256(createdAt)["words"][0];
   //console.log(PostId) //ok
 
   // 해당 게시글의 ID가 DB에 있는지 조회
-  const existPostId = await Post.find({ postId });
-  const userId = user.id;
+  // const existPostId = await Post.find({ postId });
+  // const userId = user.id;
   // console.log(UserId) //ok
 
   //유효성 검사
-  if (existPostId.length == 0) {
-    await Post.create({ createdAt, postId, content, userId });
-  }
+  await Post.create({ createdAt, content, userId });
+
   res.send({ result: "success" });
 });
 
