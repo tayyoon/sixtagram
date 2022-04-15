@@ -1,5 +1,5 @@
 const express = require("express");
-const User = require("../schemas/comments");
+const User = require("../schemas/comment");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 //token key 보안처리
