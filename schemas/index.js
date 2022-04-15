@@ -1,7 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const connect = () => {
   mongoose
-    .connect('mongodb://localhost:27017/clone', { ignoreUndefined: true })
+    .connect("mongodb://13.125.254.69:27017/sixtagram", {
+      ignoreUndefined: true,
+    })
     .catch((err) => {
       console.error(err);
     });
