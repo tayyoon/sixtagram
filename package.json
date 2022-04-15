@@ -1,0 +1,32 @@
+{
+  "name": "sixtagram",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prettify": "prettier --write *.js **/*.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1115.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.3.0",
+    "multer": "^1.4.4",
+    "multer-s3": "^2.10.0",
+    "prettier": "^2.6.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tayyoon/sixtagram.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/tayyoon/sixtagram/issues"
+  },
+  "homepage": "https://github.com/tayyoon/sixtagram#readme",
+  "description": ""
+}
