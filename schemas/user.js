@@ -6,7 +6,7 @@ const UsersSchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
-  password: {
+  hashPassword: {
     type: String,
     required: true,
   },
@@ -14,6 +14,7 @@ const UsersSchema = new mongoose.Schema({
     type: String,
   },
   follow: [String],
+
   follower: [String],
 });
 
