@@ -8,9 +8,6 @@ const PostSchema = new mongoose.Schema({
     imageUrl: {
         type: String,
     },
-    postId: {
-        type: String,
-    },
     userId: {
         type: String,
     },
