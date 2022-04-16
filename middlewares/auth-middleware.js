@@ -3,6 +3,7 @@ const User = require("../schemas/user");
 const fs = require("fs");
 const mykey = fs.readFileSync(__dirname + "/key.txt").toString();
 
+
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
