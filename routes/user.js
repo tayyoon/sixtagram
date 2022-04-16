@@ -169,4 +169,32 @@ router.post("/follow", authMiddleware, async (req, res) => {
   res.status(203).send({ msg: "ㅊㅋㅊㅋ" });
 });
 
+// 언팔로우
+router.post("/unfollow", authMiddleware, async (req, res) => {
+  const { user } = res.locals;
+  const { userId } = user;
+  const { unFollowUser } = req.body;
+
+  const followCheck = await User.find({ userId });
+  const followList = followCheck[0].follow;
+  console.log(followList[0], followList[1]);
+
+  try {
+    for (let i = 0; i < followList.length; i++) {
+      if (unFollowUser == followList[i]) {
+        console.log("aaa", followList[i]);
+        await User.updateOne({ userId }, { $pull: { follow: unFollowUser } });
+        await User.updateOne(
+          { userId: unFollowUser },
+          { $pull: { follower: userId } }
+        );
+      }
+    }
+  } catch (error) {
+    res.status(401).send({ msg: "팔로우한 사용자가 아닙니다." });
+    return;
+  }
+  res.status(203).send({ msg: "언팔로우 되었습니다." });
+});
+
 module.exports = router;
