@@ -23,7 +23,7 @@ const authMiddleware = require("../middlewares/auth-middleware");
 // });
 
 //게시글조회 페이지
-router.get("/api/postList/:PostId", async (req, res) => {
+router.get("/postList/:PostId", async (req, res) => {
   //주소에 PostId를 파라미터값으로 가져옴
   const { PostId } = req.params;
   //console.log(PostId); //ok

@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
 //token key 보안처리
 const fs = require("fs");
+const authMiddleware = require("../middlewares/auth-middleware");
 require("dotenv").config();
-// const { nextTick } = require("process");
 
 router.get("/", (req, res) => {
   res.send("this is root page");
@@ -53,6 +53,8 @@ router.post("/signUp", async (req, res) => {
       }
     );
 
+    console.log(userId);
+
     res.status(201).send({
       msg: "회원가입 성공",
       user,
@@ -86,7 +88,13 @@ router.post("/idCheck", async (req, res) => {
 });
 
 // 로그인유지
-router.get("/isLogin", async (req, res) => {});
+router.get("/isLogin", authMiddleware, async (req, res) => {
+  const { user } = res.locals;
+  const { userId, userName, follow, follower } = user;
+
+  const userInfo = { userId, userName, follow, follower };
+  res.status(203).send({ msg: "good", userInfo });
+});
 
 // 로그인
 router.post("/login", async (req, res) => {
@@ -125,6 +133,40 @@ router.post("/login", async (req, res) => {
     msg: "로그인 성공",
     token,
   });
+});
+
+// 팔로우
+router.post("/follow", authMiddleware, async (req, res) => {
+  const { user } = res.locals;
+  const { userId } = user;
+  const { followUser } = req.body;
+
+  const followCheck = await User.find({ userId });
+  console.log("aaaaaaa", followCheck);
+  const followList = followCheck[0].follow;
+  console.log(followList);
+  if (!followList.length) {
+    await User.updateOne({ userId }, { $push: { follow: followUser } });
+    await User.updateOne(
+      { userId: followUser },
+      { $push: { follower: userId } }
+    );
+  } else {
+    for (let i = 0; i < followList.length; i++) {
+      if (followList[i] != followUser) {
+        await User.updateOne({ userId }, { $push: { follow: followUser } });
+        await User.updateOne(
+          { userId: followUser },
+          { $push: { follower: userId } }
+        );
+      } else {
+        res.status(401).send({ errorMessage: "이미 팔로우 되어있습니다!" });
+        return;
+      }
+    }
+  }
+
+  res.status(203).send({ msg: "ㅊㅋㅊㅋ" });
 });
 
 module.exports = router;
