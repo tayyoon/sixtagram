@@ -10,28 +10,6 @@ const fs = require("fs");
 require("dotenv").config();
 const authMiddleware = require("../middlewares/auth-middleware");
 
-// 게시글 목록 조회
-// router.get("/blogList", async (req, res, next) => {
-
-//   try {
-//     const blogList = await Blog.find({}).sort("-NowDate");
-//     res.json({ blogList });
-//   } catch (err) {
-//     console.error(err);
-//     next(err);
-//   }
-// });
-
-//게시글조회 페이지
-router.get("/postList/:PostId", async (req, res) => {
-  //주소에 PostId를 파라미터값으로 가져옴
-  const { PostId } = req.params;
-  //console.log(PostId); //ok
-
-  idList = await Post.findOne({ PostId });
-  //detail 값으로 넘겨줌
-  res.json({ idList });
-});
 
 const path = require("path");
 let AWS = require("aws-sdk");
@@ -52,36 +30,36 @@ let upload = multer({
   }),
 });
 
-// 게시글 조회 //follow 리스트 있는 id만 보이게 하기
+
+
+// 게시글 조회 //follow 리스트 있는 id의 글만 보이게 하기 
 router.get("/postList", authMiddleware, async (req, res, next) => {
-  //const { user } = res.locals;
   const { idList } = req.body;
-  //console.log(idList)  //ok
+  console.log(idList)
+  const followPost = [];
 
-  // 현재 로그인된 사용자의 follow 확인용.
-  // const { user } = res.locals;
-  // console.log(user)  //ok // test02의 follw는 test04이다.
-
-  try {
-    // for(const followId in idList){
-    //   console.log(followId)
-    //   const postList = await Post.find({ userId : followId })
-    //   res.json({postList});
-    // }
-
-    for (i = 0; i < idList.length; i++) {
-      let followId = idList[i];
-      console.log(followId); //ok
-      const postList = await Post.find({ userId: followId });
-      console.log(postList); // ok //follow의 글만 조회됌
-      //.sort("-createdAt");
-      res.json({ postList });
-    }
-  } catch (err) {
-    res.status(400).json({ msg: "게시글이 조회되지 않았습니다." });
-    next(err);
-  }
+   try {    
+    for (i=0; i<idList.length; i++) {
+      let followId = idList[i]
+     console.log(followId)  //ok //
+      const postList = await Post.find({ userId : followId })
+      for(j=0; j<postList.length; j++){
+        followPost.push(postList[j])
+      }
+     }
+     followPost.sort(followPost.createdAt).reverse();
+     console.log(followPost)
+    // friendsinfo.sort(friendsinfo.createdAt);
+    // console.log("aa",friendsinfo)
+     return res.json({followPost});
+  
+   } catch (err) {
+     res.status(400).json({msg :"게시글이 조회되지 않았습니다."});
+     next(err);
+}
 });
+                  
+         
 
 //게시글 작성
 router.post(
