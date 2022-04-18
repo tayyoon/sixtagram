@@ -5,10 +5,9 @@ const jwt = require("jsonwebtoken");
 const moment = require("moment");
 //token key 보안처리
 const fs = require("fs");
-// const mykey = fs.readFileSync(__dirname + “/../middlewares/key.txt”).toString();
+//const mykey = fs.readFileSync(__dirname + "/../middlewares/key.txt").toString();
 //multer-s3 미들웨어 연결
 require("dotenv").config();
-//const upload = require("../S3/s3");
 const authMiddleware = require("../middlewares/auth-middleware");
 
 
@@ -33,26 +32,39 @@ let upload = multer({
 
 
 
-
 // 게시글 조회 //follow 리스트 있는 id만 보이게 하기 
-router.post("/postList", authMiddleware, async (req, res, next) => {
-
+router.get("/postList", authMiddleware, async (req, res, next) => {
+  //const { user } = res.locals;
   const { idList } = req.body;
-  console.log(idList)
+  //console.log(idList)  //ok
 
-  for (i=0; i<idList.length; i++) {
-    let followId = idList[i]
-  }
-// 2명이상의 사용자가 작성한 글 생기면 구현해보기. 
-
-  try {
-    const postList = await Post.findOne({ followId }).sort("-createdAt");
-    res.json({ postList });
-  } catch (err) {
-    res.status(400).send({msg :"게시글이 조회되지 않았습니다."});
-    next(err);
-  } 
-}); 
+  // 현재 로그인된 사용자의 follow 확인용.
+  // const { user } = res.locals;
+  // console.log(user)  //ok // test02의 follw는 test04이다.
+ 
+  
+   try {    
+    // for(const followId in idList){
+    //   console.log(followId)
+    //   const postList = await Post.find({ userId : followId })
+    //   res.json({postList});  
+    // }
+  
+   
+    for (i=0; i<idList.length; i++) {
+      let followId = idList[i]
+      console.log(followId)  //ok
+      const postList = await Post.find({ userId : followId })
+      console.log(postList)  // ok //follow의 글만 조회됌 
+      //.sort("-createdAt");
+      res.json({postList});
+     }
+  
+   } catch (err) {
+     res.status(400).json({msg :"게시글이 조회되지 않았습니다."});
+     next(err);
+   }
+});                                                      
 
 
 //게시글 작성
@@ -60,13 +72,13 @@ router.post("/posts", authMiddleware, upload.single('imageUrl'), async (req, res
   //작성한 정보 가져옴
   const { content } = req.body;
   const imageUrl = req.file.location
-  console.log("req.file: ", req.file); // 테스트 => req.file.location에 이미지 링크(s3-server)가 담겨있음 
+  //console.log("req.file: ", req.file); // 테스트 => req.file.location에 이미지 링크(s3-server)가 담겨있음 
   console.log(content, imageUrl)
 
   // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
   const { user } = res.locals;
   const userId = user.userId;
-  //console.log(user)  //ok
+  console.log(user)  //ok
 
   // 글작성시각 생성 
   require("moment-timezone");
