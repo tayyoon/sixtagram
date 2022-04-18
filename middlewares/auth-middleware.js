@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../schemas/user");
 const fs = require("fs");
+require("dotenv").config();
 // const mykey = fs.readFileSync(__dirname + "/key.txt").toString();
 
 module.exports = (req, res, next) => {
@@ -24,7 +25,6 @@ module.exports = (req, res, next) => {
   try {
     const { userId } = jwt.verify(tokenValue, process.env.key);
     //검증 성공시 locals에 인증 정보 넣어주기//
-    console.log(userId);
     User.findOne({ userId })
       .exec()
       .then((user) => {

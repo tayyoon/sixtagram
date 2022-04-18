@@ -11,6 +11,30 @@ require("dotenv").config();
 const authMiddleware = require("../middlewares/auth-middleware");
 
 
+// 게시글 목록 조회
+// router.get("/blogList", async (req, res, next) => {
+
+//   try {
+//     const blogList = await Blog.find({}).sort("-NowDate");
+//     res.json({ blogList });
+//   } catch (err) {
+//     console.error(err);
+//     next(err);
+//   }
+// });
+
+//게시글조회 페이지
+router.get("/postList/:PostId", async (req, res) => {
+  //주소에 PostId를 파라미터값으로 가져옴
+  const { PostId } = req.params;
+  //console.log(PostId); //ok
+
+  idList = await Post.findOne({ PostId });
+  //detail 값으로 넘겨줌
+  res.json({ idList });
+});
+
+
 const path = require("path");
 let AWS = require("aws-sdk");
 AWS.config.loadFromPath(path.join(__dirname, "../config/s3.json")); // 인증
