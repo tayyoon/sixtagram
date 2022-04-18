@@ -144,7 +144,7 @@ router.post("/follow", authMiddleware, async (req, res) => {
   const followCheck = await User.find({ userId });
   console.log("aaaaaaa", followCheck);
   const followList = followCheck[0].follow;
-  console.log(followList);
+  console.log("팔로우 리스트-------->", followList);
   if (!followList.length) {
     await User.updateOne({ userId }, { $push: { follow: followUser } });
     await User.updateOne(
