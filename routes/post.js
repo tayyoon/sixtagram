@@ -10,31 +10,6 @@ const fs = require("fs");
 require("dotenv").config();
 const authMiddleware = require("../middlewares/auth-middleware");
 
-
-// 게시글 목록 조회
-// router.get("/blogList", async (req, res, next) => {
-
-//   try {
-//     const blogList = await Blog.find({}).sort("-NowDate");
-//     res.json({ blogList });
-//   } catch (err) {
-//     console.error(err);
-//     next(err);
-//   }
-// });
-
-//게시글조회 페이지
-router.get("/postList/:PostId", async (req, res) => {
-  //주소에 PostId를 파라미터값으로 가져옴
-  const { PostId } = req.params;
-  //console.log(PostId); //ok
-
-  idList = await Post.findOne({ PostId });
-  //detail 값으로 넘겨줌
-  res.json({ idList });
-});
-
-
 const path = require("path");
 let AWS = require("aws-sdk");
 AWS.config.loadFromPath(path.join(__dirname, "../config/s3.json")); // 인증
@@ -52,6 +27,7 @@ let upload = multer({
         acl: 'public-read-write',
     })
 })
+
 // 게시글 조회 //follow 리스트 있는 id만 보이게 하기 
 router.get("/postList", authMiddleware, async (req, res, next) => {
   //const { user } = res.locals;
@@ -83,7 +59,8 @@ router.get("/postList", authMiddleware, async (req, res, next) => {
      res.status(400).json({msg :"게시글이 조회되지 않았습니다."});
      next(err);
    }
-});                                                      
+});                     
+
 //게시글 작성
 router.post("/posts", authMiddleware, upload.single('imageUrl'), async (req, res) => {
   //작성한 정보 가져옴
@@ -94,7 +71,7 @@ router.post("/posts", authMiddleware, upload.single('imageUrl'), async (req, res
   // 사용자 브라우저에서 보낸 쿠키를 인증미들웨어통해 user변수 생성
   const { user } = res.locals;
   const userId = user.userId;
-  console.log(user)  //ok
+ // console.log(user)  //ok
   // 글작성시각 생성 
   require("moment-timezone");
   moment.tz.setDefault("Asia/Seoul");
@@ -106,6 +83,7 @@ router.post("/posts", authMiddleware, upload.single('imageUrl'), async (req, res
     res.status(400).send({msg :"게시글이 작성되지 않았습니다."});
   }
 });
+
 // 게시글 수정 페이지
 router.patch("/posts/:postId", upload.single('imageUrl'), authMiddleware, async (req, res) => {
  
@@ -135,6 +113,7 @@ router.patch("/posts/:postId", upload.single('imageUrl'), authMiddleware, async 
     res.status(400).send({msg :"게시글이 수정되지 않았습니다."});
   }
 })
+
 // 게시글 삭제 
 router.delete("/posts/:postId", authMiddleware, async (req, res) => {
   const { postId } = req.params;
