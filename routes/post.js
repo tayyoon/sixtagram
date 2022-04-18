@@ -1,5 +1,6 @@
 const express = require("express");
 const Post = require("../schemas/post");
+const User = require("../schemas/user");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
@@ -28,38 +29,35 @@ let upload = multer({
     })
 })
 
-// 게시글 조회 //follow 리스트 있는 id만 보이게 하기 
+// 게시글 조회 //follow 리스트 있는 id의 글만 보이게 하기 
 router.get("/postList", authMiddleware, async (req, res, next) => {
-  //const { user } = res.locals;
-  const { idList } = req.body;
-  //console.log(idList)  //ok
-  // 현재 로그인된 사용자의 follow 확인용.
-  // const { user } = res.locals;
-  // console.log(user)  //ok // test02의 follw는 test04이다.
- 
-  
+  const { user } = res.locals;
+  const idList = user.follow;
+
+  //console.log(idList)  
+  const followPost = [];
+
    try {    
-    // for(const followId in idList){
-    //   console.log(followId)
-    //   const postList = await Post.find({ userId : followId })
-    //   res.json({postList});  
-    // }
-  
-   
     for (i=0; i<idList.length; i++) {
       let followId = idList[i]
-      console.log(followId)  //ok
+     //console.log(followId)  //ok //
       const postList = await Post.find({ userId : followId })
-      console.log(postList)  // ok //follow의 글만 조회됌 
-      //.sort("-createdAt");
-      res.json({postList});
+      for(j=0; j<postList.length; j++){
+        followPost.push(postList[j])
+      }
      }
+     followPost.sort(followPost.createdAt).reverse();
+     console.log(followPost)
+    // friendsinfo.sort(friendsinfo.createdAt);
+    // console.log("aa",friendsinfo)
+     return res.json({followPost});
   
    } catch (err) {
      res.status(400).json({msg :"게시글이 조회되지 않았습니다."});
      next(err);
-   }
-});                     
+}
+});
+                  
 
 //게시글 작성
 router.post("/posts", authMiddleware, upload.single('imageUrl'), async (req, res) => {
@@ -138,4 +136,5 @@ router.delete("/posts/:postId", authMiddleware, async (req, res) => {
 router.get("/", (req, res) => {
   res.send("this is root page");
 });
+
 module.exports = router;
