@@ -32,7 +32,7 @@ let upload = multer({
 // 게시글 조회 //follow 리스트 있는 id의 글만 보이게 하기 
 router.get("/postList", authMiddleware, async (req, res, next) => {
   const { user } = res.locals;
-  const idList = user.follow;
+  const idList = req.body;
 
   //console.log(idList)  
   const followPost = [];
