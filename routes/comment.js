@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 //token key 보안처리
 const fs = require("fs"); //?
 const authMiddleware = require("../middlewares/auth-middleware");
+
 //const mykey = fs.readFileSync(__dirname + "/../middlewares/key.txt").toString();
 //multer-s3 미들웨어 연결
 // require('dotenv').config();
