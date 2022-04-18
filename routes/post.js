@@ -16,23 +16,22 @@ let AWS = require("aws-sdk");
 AWS.config.loadFromPath(path.join(__dirname, "../config/s3.json")); // 인증
 let s3 = new AWS.S3();
 let multer = require("multer");
-let multerS3 = require("multer-s3");
+let multerS3 = require('multer-s3');
 let upload = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: "sixtagram",
-    key: function (req, file, cb) {
-      let extension = path.extname(file.originalname);
-      cb(null, Date.now().toString() + extension);
-    },
-    acl: "public-read-write",
-  }),
-});
+    storage: multerS3({
+        s3: s3,
+        bucket: "sixtagram",
+        key: function (req, file, cb) {
+             let extension = path.extname(file.originalname);
+             cb(null, Date.now().toString() + extension)
+        },
+        acl: 'public-read-write',
+    })
+})
 
-// 게시글 조회 //follow 리스트 있는 id의 글만 보이게 하기
 router.get("/postList", authMiddleware, async (req, res, next) => {
   const { user } = res.locals;
-  const idList = req.body;
+  const { idList } = req.body;
 
   //console.log(idList)
   const followPost = [];
@@ -55,7 +54,10 @@ router.get("/postList", authMiddleware, async (req, res, next) => {
     res.status(400).json({ msg: "게시글이 조회되지 않았습니다." });
     next(err);
   }
+
 });
+                  
+// {"idList":["test02","test04"]}
 
 //게시글 작성
 router.post(
@@ -87,8 +89,8 @@ router.post(
     } catch {
       res.status(400).send({ msg: "게시글이 작성되지 않았습니다." });
     }
-  }
-);
+  });
+
 
 // 게시글 수정 페이지
 router.patch(
@@ -126,13 +128,13 @@ router.patch(
     } catch {
       res.status(400).send({ msg: "게시글이 수정되지 않았습니다." });
     }
-  }
-);
+  });
 
-// 게시글 삭제
+
+// 게시글 삭제 
 router.delete("/posts/:postId", authMiddleware, async (req, res) => {
   const { postId } = req.params;
-  const video = await Post.find({ _id: postId }); // 현재 URL에 전달된 id값을 받아서 db찾음
+  const video = await Post.find({ _id : postId })  // 현재 URL에 전달된 id값을 받아서 db찾음
   //console.log(postId)
   const url = video[0].imageUrl.split("/"); // video에 저장된 fileUrl을 가져옴
   const delFileName = url[url.length - 1];
@@ -150,12 +152,11 @@ router.delete("/posts/:postId", authMiddleware, async (req, res) => {
       }
     );
     res.send({ result: "success" });
-  } catch {
-    res.status(400).send({ msg: "게시글이 삭제되지 않았습니다." });
+  }catch{
+    res.status(400).send({msg :"게시글이 삭제되지 않았습니다."});
   }
+ 
 });
-router.get("/", (req, res) => {
-  res.send("this is root page");
-});
+
 
 module.exports = router;

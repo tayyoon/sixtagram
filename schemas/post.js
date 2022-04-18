@@ -15,7 +15,6 @@ const PostSchema = new mongoose.Schema({
     type: String,
   },
 });
-
 PostSchema.virtual("PostId").get(function () {
   return this._id.toHexString();
 });

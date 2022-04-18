@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../schemas/user");
 const fs = require("fs");
 require("dotenv").config();
+
 // const mykey = fs.readFileSync(__dirname + "/key.txt").toString();
 
 module.exports = (req, res, next) => {
