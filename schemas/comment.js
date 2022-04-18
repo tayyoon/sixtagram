@@ -1,35 +1,30 @@
 const mongoose = require("mongoose");
 
 const CommentsSchema = new mongoose.Schema({
-    comment: {
-        type: String,
-        required: true,
-      },
-      nickname: {
-        type: String,
-      },
-      email: {
-        type: String,
-      },
-      postId: {
-        type: String,
-      },
-      createdAt: {
-        type: String,
-      },
+  // commentId: {
+  //     type: String,
+  //     required: true,
+  //   },
+  userId: {
+    type: String,
+  },
+  postId: {
+    type: String,
+  },
+  comment: {
+    type: String,
+  },
+  createdAt: {
+    type: String,
+  },
 });
 
+CommentsSchema.virtual("commentId").get(function () {
+  return this._id.toHexString();
+});
 
-
-
-
-
-// UserSchema.virtual('jwtId').get(function () {
-//     return this._id.toHexString();
-// });
-
-// UserSchema.set('toJSON', {
-//     virtuals: true,
-// });
+CommentsSchema.set("toJSON", {
+  virtuals: true,
+});
 
 module.exports = mongoose.model("Comments", CommentsSchema);
