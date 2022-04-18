@@ -14,8 +14,15 @@ router.get("/", (req, res) => {
 
 // 회원가입 -> follow, follower post 질문
 router.post("/signUp", async (req, res) => {
-  const { userId, userName, password, passwordCheck, follow, follower } =
-    req.body;
+  const {
+    userId,
+    userName,
+    password,
+    passwordCheck,
+    userImage,
+    follow,
+    follower,
+  } = req.body;
   try {
     const checkIdLen = /^.{4,10}$/;
     const checkPwLen = /^.{4,15}$/;
@@ -37,6 +44,7 @@ router.post("/signUp", async (req, res) => {
       userId,
       userName,
       hashPassword,
+      userImage,
       // follow,
       // follower,
     });
