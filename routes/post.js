@@ -32,14 +32,15 @@ router.post("/postList", authMiddleware, async (req, res, next) => {
   const { user } = res.locals;
   const { idList } = req.body;
 
-  //console.log(idList)
+  console.log("11111---->", idList.length, idList);
   const followPost = [];
 
   try {
     for (i = 0; i < idList.length; i++) {
       let followId = idList[i];
-      //console.log(followId)  //ok //
+      console.log("222222->>>", followId); //ok //
       const postList = await Post.find({ userId: followId });
+      console.log(postList);
       for (j = 0; j < postList.length; j++) {
         followPost.push(postList[j]);
       }
