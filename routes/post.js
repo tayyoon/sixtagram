@@ -31,7 +31,7 @@ let upload = multer({
 router.post("/postList", authMiddleware, async (req, res, next) => {
   const { user } = res.locals;
   const { idList } = req.body;
-
+  console.log(req.body);
   console.log("11111---->", idList.length, idList);
   const followPost = [];
 
