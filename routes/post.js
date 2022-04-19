@@ -1,6 +1,5 @@
 const express = require("express");
 const Post = require("../schemas/post");
-const User = require("../schemas/user");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const moment = require("moment");
@@ -29,10 +28,10 @@ let upload = multer({
     })
 })
 
-router.get("/postList", authMiddleware, async (req, res, next) => {
-  const { user } = res.locals;
-  const { idList } = req.body;
 
+//로그인한 사람이 팔로우한 id의 글만 조회 
+router.get("/postList", authMiddleware, async (req, res, next) => {
+  const { idList }  = req.body;
   //console.log(idList)
   const followPost = [];
 
@@ -47,8 +46,6 @@ router.get("/postList", authMiddleware, async (req, res, next) => {
     }
     followPost.sort(followPost.createdAt).reverse();
     console.log(followPost);
-    // friendsinfo.sort(friendsinfo.createdAt);
-    // console.log("aa",friendsinfo)
     return res.json({ followPost });
   } catch (err) {
     res.status(400).json({ msg: "게시글이 조회되지 않았습니다." });
@@ -98,6 +95,7 @@ router.patch(
   upload.single("imageUrl"),
   authMiddleware,
   async (req, res) => {
+    
     const { postId } = req.params;
     const { content } = req.body;
     const imageUrl = req.file.location;
