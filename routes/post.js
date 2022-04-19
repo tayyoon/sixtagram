@@ -27,7 +27,8 @@ let upload = multer({
   }),
 });
 
-router.get("/postList", authMiddleware, async (req, res, next) => {
+// 게시글 조회
+router.post("/postList", authMiddleware, async (req, res, next) => {
   const { user } = res.locals;
   const { idList } = req.body;
 
