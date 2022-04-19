@@ -49,7 +49,7 @@ router.post("/postList", authMiddleware, async (req, res, next) => {
     console.log(followPost);
     // friendsinfo.sort(friendsinfo.createdAt);
     // console.log("aa",friendsinfo)
-    return res.json({ followPost });
+    return res.send(followPost);
   } catch (err) {
     res.status(400).json({ msg: "게시글이 조회되지 않았습니다." });
     next(err);
