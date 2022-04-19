@@ -12,6 +12,8 @@ app.use(cors());
 const postsRouter = require("./routes/post");
 const usersRouter = require("./routes/user");
 const commentsRouter = require("./routes/comment");
+const req = require("express/lib/request");
+const likesRouter = require("./routes/like");
 
 const requestMiddleware = (req, res, next) => {
   console.log("Request URL:", req.originalUrl, " - ", new Date());
@@ -28,6 +30,7 @@ app.use("/profile", express.static("uploads"));
 app.use("/api", express.urlencoded({ extended: false }), postsRouter);
 app.use("/api", express.urlencoded({ extended: true }), usersRouter);
 app.use("/api", express.urlencoded({ extended: false }), commentsRouter);
+app.use("/api", express.urlencoded({ extended: false }), likesRouter);
 
 // app.get('/', (req, res) => {
 //     res.sendFile(__dirname + '/static/index.html');
