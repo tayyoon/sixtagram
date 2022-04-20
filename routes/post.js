@@ -110,18 +110,28 @@ router.post(
       const video = await Post.find({ _id: postId }); // 현재 URL에 전달된 id값을 받아서 db찾음
       const url = video[0].imageUrl.split("/"); // video에 저장된 fileUrl을 가져옴
       const delFileName = url[url.length - 1];
-      s3.deleteObject(
-        {
-          Bucket: "sixtagram",
-          Key: delFileName,
-        },
-        (err, data) => {
-          if (err) {
-            throw err;
+      if (imageUrl) {
+        s3.deleteObject(
+          {
+            Bucket: "sixtagram",
+            Key: delFileName,
+          },
+          (err, data) => {
+            if (err) {
+              throw err;
+            }
           }
-        }
+        );
+      } else {
+        const video = await Post.find({ _id: postId });
+        // 포스트 아이디를 찾아서 안에 이미지 유알엘을 그대로 사용하기
+        const keepImage = video[0].imageUrl;
+      }
+
+      await Post.updateOne(
+        { _id: postId },
+        { $set: { content, imageUrl: keepImage } }
       );
-      await Post.updateOne({ _id: postId }, { $set: { content, imageUrl } });
       const postList = await Post.findOne({ _id: postId });
       res.send({ result: "success", postList });
     } catch {
