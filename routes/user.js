@@ -102,8 +102,13 @@ router.get("/isLogin", authMiddleware, async (req, res) => {
   const { userId, userName, follow, follower } = user;
 
   const likePost = await Likes.find({ userId });
+  console.log(likePost.length);
+  const likePosts = [];
+  for (let i = 0; i < likePost.length; i++) {
+    likePosts.push(likePost[i].postId);
+  }
 
-  const likePosts = likePost.postId;
+  console.log(likePosts);
   const userInfo = { userId, userName, follow, follower };
   res.status(203).send({ msg: "good", userInfo, likePosts });
 });
