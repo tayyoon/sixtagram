@@ -115,10 +115,10 @@ router.post(
       return;
     }
     try {
-      const video = await Post.find({ _id: postId }); // 현재 URL에 전달된 id값을 받아서 db찾음
+      const photo = await Post.find({ _id: postId }); // 현재 URL에 전달된 id값을 받아서 db찾음
       //console.log(video)
 
-      const url = video[0].imageUrl.split("/"); // video에 저장된 fileUrl을 가져옴
+      const url = photo[0].imageUrl.split("/"); // video에 저장된 fileUrl을 가져옴
 
       const delFileName = url[url.length - 1];
       if (imageUrl) {
@@ -136,9 +136,9 @@ router.post(
         );
         await Post.updateOne({ _id: postId }, { $set: { content, imageUrl } });
       } else {
-        const video = await Post.find({ _id: postId });
+        const photo = await Post.find({ _id: postId });
         // 포스트 아이디를 찾아서 안에 이미지 유알엘을 그대로 사용하기
-        const keepImage = video[0].imageUrl;
+        const keepImage = photo[0].imageUrl;
 
         await Post.updateOne(
           { _id: postId },
