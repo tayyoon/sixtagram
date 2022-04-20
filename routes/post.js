@@ -27,14 +27,19 @@ let upload = multer({
   }),
 });
 
+// test04이 쓴 글 1
+// 625cf71d9260c86feeddb922  
+
 
 // 게시글 조회
-router.get("/postList", authMiddleware, async (req, res, next) => {
-  const { user } = res.locals;
-  const { idList } = req.body;
-  console.log(req.body);
-  console.log("11111---->", idList.length, idList);
-  const followPost = [];
+router.get("/postList", 
+  authMiddleware, 
+  async (req, res, next) => {
+   const { user } = res.locals;
+   const { idList } = req.body;
+   console.log(req.body);
+   console.log("11111---->", idList.length, idList);
+   const followPost = [];
 
   try {
     for (i = 0; i < idList.length; i++) {
@@ -93,8 +98,9 @@ router.post(
   }
 );
 
+
 // 게시글 수정 페이지
-router.patch(
+router.post(
   "/posts/:postId",
   upload.single("imageUrl"),
   authMiddleware,
@@ -111,8 +117,15 @@ router.patch(
     }
     try {
       const video = await Post.find({ _id: postId }); // 현재 URL에 전달된 id값을 받아서 db찾음
+      //console.log(video)
+
       const url = video[0].imageUrl.split("/"); // video에 저장된 fileUrl을 가져옴
+
+
       const delFileName = url[url.length - 1];
+      console.log(delFileName)
+
+
       s3.deleteObject(
         {
           Bucket: "sixtagram",
@@ -124,6 +137,7 @@ router.patch(
           }
         }
       );
+
       await Post.updateOne({ _id: postId }, { $set: { content, imageUrl } });
       const postList = await Post.findOne({ _id: postId });
       res.send({ result: "success", postList });
