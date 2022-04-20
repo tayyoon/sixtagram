@@ -32,21 +32,20 @@ let upload = multer({
 
 
 // 게시글 조회
-router.get("/postList", 
-  authMiddleware, 
-  async (req, res, next) => {
-   const { user } = res.locals;
-   const { idList } = req.body;
-   console.log(req.body);
-   console.log("11111---->", idList.length, idList);
-   const followPost = [];
+
+router.post("/postList", authMiddleware, async (req, res, next) => {
+  const { user } = res.locals;
+  const { idList } = req.body;
+  // console.log(req.body);
+  // console.log("11111---->", idList.length, idList);
+  const followPost = [];
 
   try {
     for (i = 0; i < idList.length; i++) {
       let followId = idList[i];
-      console.log("222222->>>", followId); //ok //
+      // console.log("222222->>>", followId); //ok //
       const postList = await Post.find({ userId: followId });
-      console.log(postList);
+      // console.log(postList);
       for (j = 0; j < postList.length; j++) {
         followPost.push(postList[j]);
       }
@@ -101,14 +100,14 @@ router.post(
 
 // 게시글 수정 페이지
 router.post(
-  "/posts/:postId",
+  "/postsEdit/:postId",
   upload.single("imageUrl"),
   authMiddleware,
   async (req, res) => {
     
     const { postId } = req.params;
     const { content } = req.body;
-    const imageUrl = req.file.location;
+    const imageUrl = req.file?.location;
     //console.log(userId) //ok
     //게시글 내용이 없으면 저장되지 않고 alert 뜨게하기.
     if (!content.length) {
@@ -121,24 +120,32 @@ router.post(
 
       const url = video[0].imageUrl.split("/"); // video에 저장된 fileUrl을 가져옴
 
-
       const delFileName = url[url.length - 1];
-      console.log(delFileName)
-
-
-      s3.deleteObject(
-        {
-          Bucket: "sixtagram",
-          Key: delFileName,
-        },
-        (err, data) => {
-          if (err) {
-            throw err;
+      if (imageUrl) {
+        // console.log("new이미지====", imageUrl);
+        s3.deleteObject(
+          {
+            Bucket: "sixtagram",
+            Key: delFileName,
+          },
+          (err, data) => {
+            if (err) {
+              throw err;
+            }
           }
-        }
-      );
+        );
+        await Post.updateOne({ _id: postId }, { $set: { content, imageUrl } });
+      } else {
+        const video = await Post.find({ _id: postId });
+        // 포스트 아이디를 찾아서 안에 이미지 유알엘을 그대로 사용하기
+        const keepImage = video[0].imageUrl;
 
-      await Post.updateOne({ _id: postId }, { $set: { content, imageUrl } });
+        await Post.updateOne(
+          { _id: postId },
+          { $set: { content, imageUrl: keepImage } }
+        );
+      }
+
       const postList = await Post.findOne({ _id: postId });
       res.send({ result: "success", postList });
     } catch {
