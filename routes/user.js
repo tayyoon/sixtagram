@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../schemas/user");
+const Likes = require("../schemas/like");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
@@ -14,8 +15,15 @@ router.get("/", (req, res) => {
 
 // 회원가입 -> follow, follower post 질문
 router.post("/signUp", async (req, res) => {
-  const { userId, userName, password, passwordCheck, follow, follower } =
-    req.body;
+  const {
+    userId,
+    userName,
+    password,
+    passwordCheck,
+    userImage,
+    follow,
+    follower,
+  } = req.body;
   try {
     const checkIdLen = /^.{4,10}$/;
     const checkPwLen = /^.{4,15}$/;
@@ -37,6 +45,7 @@ router.post("/signUp", async (req, res) => {
       userId,
       userName,
       hashPassword,
+      userImage,
       // follow,
       // follower,
     });
@@ -92,8 +101,16 @@ router.get("/isLogin", authMiddleware, async (req, res) => {
   const { user } = res.locals;
   const { userId, userName, follow, follower } = user;
 
+  const likePost = await Likes.find({ userId });
+  console.log(likePost.length);
+  const likePosts = [];
+  for (let i = 0; i < likePost.length; i++) {
+    likePosts.push(likePost[i].postId);
+  }
+
+  console.log(likePosts);
   const userInfo = { userId, userName, follow, follower };
-  res.status(203).send({ msg: "good", userInfo });
+  res.status(203).send({ msg: "good", userInfo, likePosts });
 });
 
 // 로그인

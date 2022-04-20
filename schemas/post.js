@@ -14,8 +14,11 @@ const PostSchema = new mongoose.Schema({
   createdAt: {
     type: String,
   },
+  likes: {
+    type: Number,
+    default: 0,
+  },
 });
-
 PostSchema.virtual("PostId").get(function () {
   return this._id.toHexString();
 });
