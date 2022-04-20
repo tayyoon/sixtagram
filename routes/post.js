@@ -93,7 +93,7 @@ router.post(
 
 // 게시글 수정 페이지
 router.post(
-  "/posts/:postId",
+  "/postsEdit/:postId",
   upload.single("imageUrl"),
   authMiddleware,
   async (req, res) => {
