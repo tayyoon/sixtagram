@@ -99,7 +99,7 @@ router.post(
   async (req, res) => {
     const { postId } = req.params;
     const { content } = req.body;
-    const imageUrl = req.file.location;
+    const imageUrl = req.file?.location;
     //console.log(userId) //ok
     //게시글 내용이 없으면 저장되지 않고 alert 뜨게하기.
     if (!content.length) {
