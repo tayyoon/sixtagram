@@ -14,7 +14,8 @@ const authMiddleware = require("../middlewares/auth-middleware");
 //댓글작성
 router.post("/comments/:postId", authMiddleware, async (req, res) => {
   console.log(req);
-  const { comment, postId } = req.params;
+  const { postId } = req.params;
+  const comment = req.body;
 
   const { user } = res.locals; // 토큰 뽑아쓰고
 
