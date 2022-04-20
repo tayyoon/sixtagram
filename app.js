@@ -30,6 +30,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_message", (data) => {
+    console.log("cccccheckkkkkk --->", data);
     socket.to(data.socketId).emit("receive_message", data); // 송신자에게 받은 메시지를 다시 보낸다. '.to(data.room)' 은 같은 채팅방에 있는 사람에게 메시지 보내기
   });
   socket.on("disconnect", () => {
