@@ -31,16 +31,16 @@ let upload = multer({
 router.post("/postList", authMiddleware, async (req, res, next) => {
   const { user } = res.locals;
   const { idList } = req.body;
-  console.log(req.body);
-  console.log("11111---->", idList.length, idList);
+  // console.log(req.body);
+  // console.log("11111---->", idList.length, idList);
   const followPost = [];
 
   try {
     for (i = 0; i < idList.length; i++) {
       let followId = idList[i];
-      console.log("222222->>>", followId); //ok //
+      // console.log("222222->>>", followId); //ok //
       const postList = await Post.find({ userId: followId });
-      console.log(postList);
+      // console.log(postList);
       for (j = 0; j < postList.length; j++) {
         followPost.push(postList[j]);
       }
@@ -92,7 +92,7 @@ router.post(
 );
 
 // 게시글 수정 페이지
-router.patch(
+router.put(
   "/posts/:postId",
   upload.single("imageUrl"),
   authMiddleware,
