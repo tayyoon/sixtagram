@@ -111,6 +111,7 @@ router.post(
       const url = video[0].imageUrl.split("/"); // video에 저장된 fileUrl을 가져옴
       const delFileName = url[url.length - 1];
       if (imageUrl) {
+        console.log("new이미지====", imageUrl);
         s3.deleteObject(
           {
             Bucket: "sixtagram",
@@ -125,6 +126,7 @@ router.post(
       } else {
         const video = await Post.find({ _id: postId });
         // 포스트 아이디를 찾아서 안에 이미지 유알엘을 그대로 사용하기
+        console.log("aaasdfasdfasdfasdf", video);
         const keepImage = video[0].imageUrl;
       }
 
