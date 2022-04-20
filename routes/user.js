@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../schemas/user");
+const Likes = require("../schemas/like");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const CryptoJS = require("crypto-js");
