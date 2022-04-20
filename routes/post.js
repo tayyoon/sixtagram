@@ -123,17 +123,19 @@ router.post(
             }
           }
         );
+        await Post.updateOne({ _id: postId }, { $set: { content, imageUrl } });
       } else {
         const video = await Post.find({ _id: postId });
         // 포스트 아이디를 찾아서 안에 이미지 유알엘을 그대로 사용하기
         console.log("aaasdfasdfasdfasdf", video);
         const keepImage = video[0].imageUrl;
+
+        await Post.updateOne(
+          { _id: postId },
+          { $set: { content, imageUrl: keepImage } }
+        );
       }
 
-      await Post.updateOne(
-        { _id: postId },
-        { $set: { content, imageUrl: keepImage } }
-      );
       const postList = await Post.findOne({ _id: postId });
       res.send({ result: "success", postList });
     } catch {
