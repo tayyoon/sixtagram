@@ -15,7 +15,7 @@ const authMiddleware = require("../middlewares/auth-middleware");
 router.post("/comments/:postId", authMiddleware, async (req, res) => {
   console.log(req);
   const { postId } = req.params;
-  const comment = req.body;
+  const { comment } = req.body;
 
   const { user } = res.locals; // 토큰 뽑아쓰고
 
