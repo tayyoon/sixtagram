@@ -58,7 +58,7 @@ router.get("/comments/:postId", async (req, res) => {
 //댓글삭제  --> 게시글들어가 --> 댓글조회에서 댓글을 작성한사람만이 댓글을 지울수있게? commentId는 내가 선택한걸 지워야되니까. 이 댓글을 쓴사람을 찾아야된다.
 router.delete("/comments/:commentId", authMiddleware, async (req, res) => {
   // console.log(req);
-  const commentId = req.params.commentId;
+  const { commentId } = req.params;
   // console.log(commentId);
 
   const selectComment = await Comments.findOne({ _id: commentId }); // 내가 디비보고 바꿈. find나 findone을 둘중 아무거나 해도되는게 어차피 commentid는 유니크한값이니까.
