@@ -17,7 +17,7 @@ app.use(cors());
 const io = new Server(server, {
   // express 서버와 socket.io 연동
   cors: {
-    origin: "http://3.34.132.47", // 연동된 socket.io 서버에 돌릴 주소 혹은 서버
+    origin: "*", // 연동된 socket.io 서버에 돌릴 주소 혹은 서버
     methods: ["GET", "POST"],
   },
 });

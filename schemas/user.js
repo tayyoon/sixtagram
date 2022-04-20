@@ -21,12 +21,4 @@ const UsersSchema = new mongoose.Schema({
   follower: [String],
 });
 
-// UserSchema.virtual('jwtId').get(function () {
-//     return this._id.toHexString();
-// });
-
-// UserSchema.set('toJSON', {
-//     virtuals: true,
-// });
-
 module.exports = mongoose.model("User", UsersSchema);
