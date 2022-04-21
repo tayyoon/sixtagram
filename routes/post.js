@@ -42,15 +42,12 @@ router.post("/postList", authMiddleware, async (req, res, next) => {
       // console.log("222222->>>", followId); //ok //
       const postList = await Post.find({ userId: followId });
       const userImg = await User.find({ userId: followId });
-
-      let userI = userImg.userImage;
-      // console.log(postList);
+      let userI = userImg[0].userImage;
       for (j = 0; j < postList.length; j++) {
         followPost.push({ ...postList[j], userImage: userI });
       }
     }
     followPost.sort(followPost.createdAt).reverse();
-    console.log(followPost);
     return res.send(followPost);
   } catch (err) {
     res.status(400).json({ msg: "게시글이 조회되지 않았습니다." });
