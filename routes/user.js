@@ -214,4 +214,24 @@ router.post("/unfollow", authMiddleware, async (req, res) => {
   res.status(203).send({ msg: "언팔로우 되었습니다." });
 });
 
+router.get("/recommand", authMiddleware, async (req, res) => {
+  const userAll = await User.find({});
+
+  console.log("유저 뽑아 유저", userAll);
+
+  function getFields(input, field) {
+    var output = [];
+    for (var i = 0; i < input.length; ++i) output.push(input[i][field]);
+    return output;
+  }
+
+  let result = getFields(userAll, "userId");
+
+  const userRandom = [...new Set(result)]
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 5);
+
+  res.send({ msg: "랜덤뽑기 성공", userRandom });
+});
+
 module.exports = router;
