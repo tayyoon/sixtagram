@@ -38,11 +38,15 @@ router.post("/postList", authMiddleware, async (req, res, next) => {
   try {
     for (i = 0; i < idList.length; i++) {
       let followId = idList[i];
+
       // console.log("222222->>>", followId); //ok //
       const postList = await Post.find({ userId: followId });
+      const userImg = await User.find({ userId: followId });
+
+      let userI = userImg.userImage;
       // console.log(postList);
       for (j = 0; j < postList.length; j++) {
-        followPost.push(postList[j]);
+        followPost.push({ ...postList[j], userImage: userI });
       }
     }
     followPost.sort(followPost.createdAt).reverse();
@@ -53,8 +57,6 @@ router.post("/postList", authMiddleware, async (req, res, next) => {
     next(err);
   }
 });
-                  
-        
 
 // {"idList":["test02","test04"]}
 
