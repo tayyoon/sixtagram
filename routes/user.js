@@ -109,7 +109,7 @@ router.get("/isLogin", authMiddleware, async (req, res) => {
   }
 
   console.log(likePosts);
-  const userInfo = { userId, userName, follow, follower };
+  const userInfo = { userId, userName, follow, follower, userImage };
   res.status(203).send({ msg: "good", userInfo, likePosts });
 });
 
@@ -143,6 +143,7 @@ router.post("/login", async (req, res) => {
       userName: userInfo.userName,
       follow: userInfo.follow,
       follower: userInfo.follower,
+      userImage: userInfo.userImage,
     },
     process.env.key
   );
