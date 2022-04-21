@@ -186,6 +186,67 @@ router.post("/follow", authMiddleware, async (req, res) => {
   res.status(203).send({ msg: "ㅊㅋㅊㅋ" });
 });
 
+// aws s3연결
+const path = require("path");
+let AWS = require("aws-sdk");
+AWS.config.loadFromPath(path.join(__dirname, "../config/s3.json")); // 인증
+let s3 = new AWS.S3();
+let multer = require("multer");
+let multerS3 = require("multer-s3");
+let upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: "sixtagram",
+    key: function (req, file, cb) {
+      let extension = path.extname(file.originalname);
+      cb(null, Date.now().toString() + extension);
+    },
+    acl: "public-read-write",
+  }),
+});
+
+// 유저 프로필 업로드
+router.post(
+  "/userEdit",
+  upload.single("profile"),
+  authMiddleware,
+  async (req, res) => {
+    const { user } = res.locals;
+    const { userId } = user;
+    const profile = req.file?.location;
+
+    try {
+      const userInfo = await User.find({ userId });
+      console.log(userInfo);
+      const userImg = userInfo[0].userImage;
+      console.log(userImg);
+
+      if (userImg) {
+        // console.log("new이미지====", imageUrl);
+        const url = userImg.split("/");
+        const delFileName = url[url.length - 1];
+        s3.deleteObject(
+          {
+            Bucket: "sixtagram",
+            Key: delFileName,
+          },
+          (err, data) => {
+            if (err) {
+              throw err;
+            }
+          }
+        );
+        await User.updateOne({ userId }, { $set: { userImage: profile } });
+      } else if (userImg == 1) {
+        await User.updateOne({ userId }, { $set: { userImage: profile } });
+      }
+      res.send("성공");
+    } catch (error) {
+      res.status(400).send({ msg: "프로필이 수정되지 않았습니다." });
+    }
+  }
+);
+
 // 언팔로우
 router.post("/unfollow", authMiddleware, async (req, res) => {
   const { user } = res.locals;
