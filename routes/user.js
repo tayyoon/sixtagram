@@ -99,7 +99,7 @@ router.post("/idCheck", async (req, res) => {
 // 로그인유지
 router.get("/isLogin", authMiddleware, async (req, res) => {
   const { user } = res.locals;
-  const { userId, userName, follow, follower } = user;
+  const { userId, userName, follow, follower, userImage } = user;
 
   const likePost = await Likes.find({ userId });
   console.log(likePost.length);
