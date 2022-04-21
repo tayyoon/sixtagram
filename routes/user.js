@@ -241,7 +241,8 @@ router.post(
       } else if (userImg == 1) {
         await User.updateOne({ userId }, { $set: { userImage: profile } });
       }
-      res.send("성공");
+      const profileImg = user.userImage;
+      res.send({ msg: "성공", profileImg });
     } catch (error) {
       res.status(400).send({ msg: "프로필이 수정되지 않았습니다." });
     }
