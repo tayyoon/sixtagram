@@ -99,7 +99,7 @@ router.post("/idCheck", async (req, res) => {
 // 로그인유지
 router.get("/isLogin", authMiddleware, async (req, res) => {
   const { user } = res.locals;
-  const { userId, userName, follow, follower } = user;
+  const { userId, userName, follow, follower, userImage } = user;
 
   const likePost = await Likes.find({ userId });
   console.log(likePost.length);
@@ -109,7 +109,7 @@ router.get("/isLogin", authMiddleware, async (req, res) => {
   }
 
   console.log(likePosts);
-  const userInfo = { userId, userName, follow, follower };
+  const userInfo = { userId, userName, follow, follower, userImage };
   res.status(203).send({ msg: "good", userInfo, likePosts });
 });
 
@@ -143,6 +143,7 @@ router.post("/login", async (req, res) => {
       userName: userInfo.userName,
       follow: userInfo.follow,
       follower: userInfo.follower,
+      userImage: userInfo.userImage,
     },
     process.env.key
   );
@@ -186,6 +187,67 @@ router.post("/follow", authMiddleware, async (req, res) => {
   res.status(203).send({ msg: "ㅊㅋㅊㅋ" });
 });
 
+// aws s3연결
+const path = require("path");
+let AWS = require("aws-sdk");
+AWS.config.loadFromPath(path.join(__dirname, "../config/s3.json")); // 인증
+let s3 = new AWS.S3();
+let multer = require("multer");
+let multerS3 = require("multer-s3");
+let upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: "sixtagram",
+    key: function (req, file, cb) {
+      let extension = path.extname(file.originalname);
+      cb(null, Date.now().toString() + extension);
+    },
+    acl: "public-read-write",
+  }),
+});
+
+// 유저 프로필 업로드
+router.post(
+  "/userEdit",
+  upload.single("profile"),
+  authMiddleware,
+  async (req, res) => {
+    const { user } = res.locals;
+    const { userId } = user;
+    const profile = req.file?.location;
+
+    try {
+      const userInfo = await User.find({ userId });
+      console.log(userInfo);
+      const userImg = userInfo[0].userImage;
+      console.log(userImg);
+
+      if (userImg) {
+        // console.log("new이미지====", imageUrl);
+        const url = userImg.split("/");
+        const delFileName = url[url.length - 1];
+        s3.deleteObject(
+          {
+            Bucket: "sixtagram",
+            Key: delFileName,
+          },
+          (err, data) => {
+            if (err) {
+              throw err;
+            }
+          }
+        );
+        await User.updateOne({ userId }, { $set: { userImage: profile } });
+      } else if (userImg == 1) {
+        await User.updateOne({ userId }, { $set: { userImage: profile } });
+      }
+      res.send({ msg: "성공", profile });
+    } catch (error) {
+      res.status(400).send({ msg: "프로필이 수정되지 않았습니다." });
+    }
+  }
+);
+
 // 언팔로우
 router.post("/unfollow", authMiddleware, async (req, res) => {
   const { user } = res.locals;
@@ -212,6 +274,26 @@ router.post("/unfollow", authMiddleware, async (req, res) => {
     return;
   }
   res.status(203).send({ msg: "언팔로우 되었습니다." });
+});
+
+router.get("/recommand", authMiddleware, async (req, res) => {
+  const userAll = await User.find({});
+
+  console.log("유저 뽑아 유저", userAll);
+
+  function getFields(input, field) {
+    var output = [];
+    for (var i = 0; i < input.length; ++i) output.push(input[i][field]);
+    return output;
+  }
+
+  let result = getFields(userAll, "userId");
+
+  const userRandom = [...new Set(result)]
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 5);
+
+  res.send({ msg: "랜덤뽑기 성공", userRandom });
 });
 
 module.exports = router;

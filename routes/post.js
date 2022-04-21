@@ -43,17 +43,16 @@ router.post("/postList", authMiddleware, async (req, res, next) => {
   try {
     for (i = 0; i < idList.length; i++) {
       let followId = idList[i];
+
       // console.log("222222->>>", followId); //ok //
       const postList = await Post.find({ userId: followId });
-      // console.log(postList);
+      const userImg = await User.find({ userId: followId });
+      let userI = userImg[0].userImage;
       for (j = 0; j < postList.length; j++) {
-        followPost.push(postList[j]);
+        followPost.push({ ...postList[j], userImage: userI });
       }
     }
     followPost.sort(followPost.createdAt).reverse();
-    console.log(followPost);
-    // friendsinfo.sort(friendsinfo.createdAt);
-    // console.log("aa",friendsinfo)
     return res.send(followPost);
 
   } catch (err) {
@@ -131,13 +130,12 @@ router.post(
             }
           }
         );
-         await Post.updateOne({ _id: postId }, { $set: { content, imageUrl } });
-      } else {  //이미지를 넣지 않았을때 
+        await Post.updateOne({ _id: postId }, { $set: { content, imageUrl } });
+      } else {
         const photo = await Post.find({ _id: postId });
-        //console.log(photo)
         // 포스트 아이디를 찾아서 안에 이미지 유알엘을 그대로 사용하기
         const keepImage = photo[0].imageUrl;
-        console.log(keepImage)
+
 
         await Post.updateOne(
           { _id: postId },
