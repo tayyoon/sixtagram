@@ -108,7 +108,7 @@ router.post(
     const { postId } = req.params;
     const { content } = req.body;
     const imageUrl = req.file?.location;
-    //console.log(userId) //ok
+   
     //게시글 내용이 없으면 저장되지 않고 alert 뜨게하기.
     if (!content.length) {
       res.status(401).send({ msg: "게시글 내용을 입력해주세요." });
@@ -116,10 +116,7 @@ router.post(
     }
     try {
       const photo = await Post.find({ _id: postId }); // 현재 URL에 전달된 id값을 받아서 db찾음
-      //console.log(video)
-
       const url = photo[0].imageUrl.split("/"); // video에 저장된 fileUrl을 가져옴
-
       const delFileName = url[url.length - 1];
       if (imageUrl) {
         // console.log("new이미지====", imageUrl);
@@ -134,11 +131,13 @@ router.post(
             }
           }
         );
-        await Post.updateOne({ _id: postId }, { $set: { content, imageUrl } });
-      } else {
+         await Post.updateOne({ _id: postId }, { $set: { content, imageUrl } });
+      } else {  //이미지를 넣지 않았을때 
         const photo = await Post.find({ _id: postId });
+        //console.log(photo)
         // 포스트 아이디를 찾아서 안에 이미지 유알엘을 그대로 사용하기
         const keepImage = photo[0].imageUrl;
+        console.log(keepImage)
 
         await Post.updateOne(
           { _id: postId },
